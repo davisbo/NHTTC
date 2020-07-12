@@ -26,7 +26,22 @@ void mouse_motion_cb(GLFWwindow*, double, double);
 void mouse_scroll_cb(GLFWwindow*, double, double);
 void key_cb(GLFWwindow*, int, int, int, int);
 
+void print_instructions() {
+	std::cout << "Click and drag to move the camera. Scroll the mouse to zoom in or out." << std::endl;
+	std::cout << "'Space': Pauses or Resumes execution." << std::endl;
+	std::cout << "'C' : Clears all agents from the simulation." << std::endl;
+	std::cout << "'L' : Brings up a file dialog to load a scene file. Clears the current scene first." << std::endl;
+	std::cout << "'S' : Brings up a file dialog to save the current agent positions and goal positions to a scene file." << std::endl;
+	std::cout << "'R' : Swaps the initial position of an agent and its goal." << std::endl;
+	std::cout << "'A' : Enters adding mode" << std::endl;
+	std::cout << " - First, use the scroll wheel or arrow keys to select an agent type." << std::endl;
+	std::cout << " - Next, for any agent with orientation, move the mouse to orient the agent." << std::endl;
+	std::cout << " - Finally, move the mouse to the desired goal location." << std::endl;
+	std::cout << " - Note that entering adding mode automatically pauses the simulation." << std::endl;
+}
+
 int main(){
+	print_instructions();
     float timePast = 0;
     float lastTime = 0;
 

@@ -563,6 +563,11 @@ void NHTTCSim::handleKeyup(GLFWwindow* wind, int key) {
   }
   if (key == GLFW_KEY_L && !adding_mode) {
     paused = true;
+    // Clear the current scene
+    agents.clear();
+    agent_start_poses.clear();
+    reset_planning_agents = true;
+    new_planning_agents.clear();
     // Get File to Load:
     nfdchar_t *outPath = NULL;
     nfdresult_t result = NFD_OpenDialog( "scn", NULL, &outPath );
@@ -593,7 +598,12 @@ void NHTTCSim::handleKeyup(GLFWwindow* wind, int key) {
     nfdchar_t *savePath = NULL;
     nfdresult_t result = NFD_SaveDialog( "scn", NULL, &savePath );
     if ( result == NFD_OKAY ) {
+      // Ensure the saved file ends with ".scn"
+      std::string scn_end = ".scn";
       std::string scn_file(savePath);
+      if (scn_file.length() < scn_end.length() || scn_file.compare(scn_file.length() - scn_end.length(), scn_end.length(), scn_end) != 0) {
+        scn_file = scn_file + scn_end;
+      }
       
       std::ofstream f_out(scn_file);
 

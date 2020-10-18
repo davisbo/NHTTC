@@ -29,10 +29,11 @@ void SetBoundsDD(TTCParams &params);
 void SetBoundsADD(TTCParams &params);
 void SetBoundsCAR(TTCParams &params);
 void SetBoundsACAR(TTCParams &params);
+void SetBoundsMUSHR(TTCParams &params);
 
 int GetVector(const std::vector<std::string>& parts, int offset, int v_len, Eigen::VectorXf& v);
 
-enum class AType { V, A, DD, ADD, CAR, ACAR };
+enum class AType { V, A, DD, ADD, CAR, ACAR, MUSHR };
 
 class Agent {
 public:

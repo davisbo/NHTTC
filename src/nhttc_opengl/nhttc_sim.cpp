@@ -51,8 +51,9 @@ NHTTCSim::NHTTCSim() {
   std::string a_texture_n = "textures/a.png";
   std::string dd_texture_n = "textures/dd.png";
   std::string add_texture_n = "textures/add.png";
-  std::string car_texture_n = "textures/car.png";
+  std::string car_texture_n = "textures/mushr.png";
   std::string acar_texture_n = "textures/acar.png";
+  std::string mushr_texture_n = "textures/mushr.png";
   int tex_w, tex_h;
   glActiveTexture(GL_TEXTURE0);
   tex0 = loadTexture(check_texture_n.c_str(), tex_w, tex_h);
@@ -68,6 +69,8 @@ NHTTCSim::NHTTCSim() {
   tex5 = loadTexture(car_texture_n.c_str(), tex_w, tex_h);
   glActiveTexture(GL_TEXTURE6);
   tex6 = loadTexture(acar_texture_n.c_str(), tex_w, tex_h);
+  glActiveTexture(GL_TEXTURE7);
+  tex6 = loadTexture(mushr_texture_n.c_str(), tex_w, tex_h);
 
   planning_thread = std::thread(&NHTTCSim::PlanAllAgents, this);
 }
@@ -185,6 +188,8 @@ int TypeToInt(AType t) {
       return 4;
     case AType::ACAR:
       return 5;
+    case AType::MUSHR:
+      return 6;
     default:
       std::cerr << "Invalid Agent Type!" << std::endl;
       return 0;
@@ -341,6 +346,7 @@ void NHTTCSim::Draw(GLFWwindow* window) {
   glUniform1i(glGetUniformLocation(shaderProgram, "texs[4]"), 4);
   glUniform1i(glGetUniformLocation(shaderProgram, "texs[5]"), 5);
   glUniform1i(glGetUniformLocation(shaderProgram, "texs[6]"), 6);
+  glUniform1i(glGetUniformLocation(shaderProgram, "texs[7]"), 7);
 
   // Set Agent Buffer:
   DrawBackground();
@@ -403,6 +409,10 @@ std::vector<std::string> NHTTCSim::GetVirtAgentParts() {
     case 5:
       type = "acar";
       p_dim = 5; u_dim = 2;
+      break;
+    case 6:
+      type = "mushr";
+      p_dim = 3; u_dim = 2;
       break;
     default:
       std::cerr << "Invalid virtual agent type: " << virt_agent_type << std::endl;

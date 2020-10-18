@@ -135,3 +135,26 @@ Eigen::Vector2f ACARTTCObstacle::GetCollisionCenter(const Eigen::VectorXf &x_t, 
   }
   return x_t.head<2>() + len_scale * radius * Eigen::Vector2f(std::cos(x_t[2]), std::sin(x_t[2]));
 }
+
+void MUSHRTTCObstacle::ContDynamics(const Eigen::VectorXf &u_t,
+                                const Eigen::VectorXf &x_t,
+                                const float t,
+                                Eigen::VectorXf* x_dot) const {
+  float len_scale = 2.0f * std::sqrt(5.0f) / 5.0f;
+  float L = 2.0f * len_scale * radius;
+  if (x_dot != nullptr) {
+    (*x_dot) = Eigen::VectorXf::Zero(3);
+    (*x_dot)[0] = u_t[0] * std::cos(x_t[2]);
+    (*x_dot)[1] = u_t[0] * std::sin(x_t[2]);
+    (*x_dot)[2] = u_t[0] * std::tan(u_t[1]) / L;
+  }
+}
+Eigen::Vector2f MUSHRTTCObstacle::GetCollisionCenter(const Eigen::VectorXf &x_t, Eigen::MatrixXf* dc_dx) {
+  float len_scale = 2.0f * std::sqrt(5.0f) / 5.0f;
+  if (dc_dx != nullptr) {
+    (*dc_dx) = Eigen::MatrixXf::Identity(2,x_t.size());
+    (*dc_dx)(0,2) = -len_scale * radius * std::sin(x_t[2]);
+    (*dc_dx)(1,2) = len_scale * radius * std::cos(x_t[2]);
+  }
+  return x_t.head<2>() + len_scale * radius * Eigen::Vector2f(std::cos(x_t[2]), std::sin(x_t[2]));
+}

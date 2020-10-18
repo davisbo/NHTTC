@@ -89,3 +89,16 @@ public:
   void ProjConstr(Eigen::VectorXf& u);
   TTCObstacle* CreateObstacle();
 };
+
+class MUSHRTTCSGDProblem : public TTCSGDProblem {
+public:
+  MUSHRTTCSGDProblem(TTCParams params_in) {
+    params = params_in;
+  }
+  void ContDynamics(const Eigen::VectorXf &u, const Eigen::VectorXf &x, const float t, Eigen::VectorXf* x_dot,
+                    Eigen::MatrixXf* dxdot_du, Eigen::MatrixXf* dxdot_dx);
+  void GetDynamicsDeriv(const Eigen::VectorXf &u, const Eigen::VectorXf &x, const float t, const float dt,
+                                Eigen::MatrixXf* dxtpdt_du, Eigen::MatrixXf* dxtpdt_dx);
+  Eigen::Vector2f GetCollisionCenter(const Eigen::VectorXf &x, Eigen::MatrixXf* dc_dx);
+  TTCObstacle* CreateObstacle();
+};

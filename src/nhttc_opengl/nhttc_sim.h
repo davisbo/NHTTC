@@ -48,7 +48,7 @@ private:
   static constexpr int A_SIZE = 9;
   GLuint vbo[1];
   float* agent_buffer;
-  GLuint tex0, tex1, tex2, tex3, tex4, tex5, tex6;
+  GLuint tex0, tex1, tex2, tex3, tex4, tex5, tex6, tex7;
   GLint shaderProgram;
   glm::mat4 proj,view;
 

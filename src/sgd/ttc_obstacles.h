@@ -88,3 +88,14 @@ public:
   Eigen::Vector2f GetCollisionCenter(const Eigen::VectorXf &x, Eigen::MatrixXf* dc_dx);
   ~ACARTTCObstacle(){};
 };
+
+class MUSHRTTCObstacle : public TTCObstacle {
+public:
+  explicit MUSHRTTCObstacle(){};
+  void ContDynamics(const Eigen::VectorXf &u,
+                               const Eigen::VectorXf &x,
+                               const float t,
+                               Eigen::VectorXf* x_dot) const;
+  Eigen::Vector2f GetCollisionCenter(const Eigen::VectorXf &x, Eigen::MatrixXf* dc_dx);
+  ~MUSHRTTCObstacle(){};
+};

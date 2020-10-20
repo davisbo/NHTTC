@@ -67,6 +67,11 @@ void SetBoundsACAR(TTCParams &params) {
   params.u_ub = Eigen::Vector2f(1.0f, 0.25f * M_PI);
 }
 
+void SetBoundsMUSHR(TTCParams &params) {
+  params.u_lb = Eigen::Vector2f(-0.3f, -0.25f * M_PI);
+  params.u_ub = Eigen::Vector2f(0.3f, 0.25f * M_PI);
+}
+
 int GetVector(const std::vector<std::string>& parts, int offset, int v_len, Eigen::VectorXf& v) {
   if (parts[offset] == "r") {
     v = Eigen::VectorXf::Random(v_len);
@@ -124,6 +129,12 @@ Agent::Agent(std::vector<std::string> parts, SGDOptParams opt_params_in) {
     x_dim = 5;
     SetBoundsACAR(params);
     prob = new ACARTTCSGDProblem(params);
+  } else if (parts[0] == "mushr") {
+    a_type = AType::MUSHR;
+    u_dim =  2;
+    x_dim = 3;
+    SetBoundsMUSHR(params);
+    prob = new MUSHRTTCSGDProblem(params);
   } else {
     std::cerr << "Unsupported Dynamics Model: " << parts[0] << std::endl;
     exit(-1);
@@ -184,6 +195,8 @@ void Agent::SetStop() {
     // Nothing to do
   } else if (a_type == AType::ACAR) {
     prob->params.x_0[3] = 0.0f;
+  } else if (a_type == AType::MUSHR) {
+    //Nothing to do
   }
 }
 

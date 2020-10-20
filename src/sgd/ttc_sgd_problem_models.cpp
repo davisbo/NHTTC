@@ -541,3 +541,75 @@ TTCObstacle* ACARTTCSGDProblem::CreateObstacle() {
   FillObstacle(o);
   return o;
 }
+
+// --------------------------------------------
+// ****************** MUSHR *********************
+// --------------------------------------------
+void MUSHRTTCSGDProblem::ContDynamics(const Eigen::VectorXf &u, const Eigen::VectorXf &x, const float t, Eigen::VectorXf* x_dot,
+                                   Eigen::MatrixXf* dxdot_du, Eigen::MatrixXf* dxdot_dx) {
+  float len_scale = 2.0f / std::sqrt(5.0f);
+  float L = 2.0f * len_scale * params.radius;
+  if (x_dot != nullptr) {
+    (*x_dot) = Eigen::VectorXf::Zero(3);
+    (*x_dot)[0] = u[0] * std::cos(x[2]);
+    (*x_dot)[1] = u[0] * std::sin(x[2]);
+    (*x_dot)[2] = u[0] * std::tan(u[1]) / L;
+  }
+  if (dxdot_du != nullptr) {
+    (*dxdot_du) = Eigen::MatrixXf::Zero(3,2);
+    (*dxdot_du)(0,0) = std::cos(x[2]);
+    (*dxdot_du)(1,0) = std::sin(x[2]);
+    (*dxdot_du)(2,0) = std::tan(u[1]) / L;
+    (*dxdot_du)(2,1) = u[0] / (std::cos(u[1]) * std::cos(u[1]) * L);
+  }
+  if (dxdot_dx != nullptr) {
+    (*dxdot_dx) = Eigen::MatrixXf::Zero(3,3);
+    (*dxdot_dx)(0,2) = -u[0] * std::sin(x[2]);
+    (*dxdot_dx)(1,2) = u[0] * std::cos(x[2]);
+  }
+}
+
+void MUSHRTTCSGDProblem::GetDynamicsDeriv(const Eigen::VectorXf &u, const Eigen::VectorXf &x, const float t, const float dt,
+                                        Eigen::MatrixXf* dxtpdt_du, Eigen::MatrixXf* dxtpdt_dx) {
+  float len_scale = 2.0f / std::sqrt(5.0f);
+  float L = 2.0f * len_scale * params.radius;
+  float th_new = x[2] + dt * u[0] / L * std::tan(u[1]);
+
+  if (dxtpdt_dx != nullptr) {
+    (*dxtpdt_dx) = Eigen::MatrixXf::Identity(3, 3);
+    (*dxtpdt_dx)(0, 2) = -0.5f * dt * u[0] * (std::sin(x[2]) + std::sin(th_new));
+    (*dxtpdt_dx)(1, 2) = 0.5f * dt * u[0] * (std::cos(x[2]) + std::cos(th_new));
+  }
+
+  if (dxtpdt_du != nullptr) {
+    (*dxtpdt_du) = Eigen::MatrixXf::Zero(3, 2);
+    (*dxtpdt_du)(2, 0) = dt * std::tan(u[1]) / L;
+    (*dxtpdt_du)(2, 1) = u[0] * dt / (L * std::cos(u[1]) * std::cos(u[1]));
+
+    (*dxtpdt_du)(0, 0) =
+        0.5f * dt *
+        (std::cos(x[2]) + std::cos(th_new) - u[0] * std::sin(th_new) * (*dxtpdt_du)(2, 0));
+    (*dxtpdt_du)(1, 0) =
+        0.5f * dt *
+        (std::sin(x[2]) + std::sin(th_new) + u[0] * std::cos(th_new) * (*dxtpdt_du)(2, 0));
+
+    (*dxtpdt_du)(0, 1) = -0.5f * dt * u[0] * std::sin(th_new) * (*dxtpdt_du)(2, 1);
+    (*dxtpdt_du)(1, 1) = 0.5f * dt * u[0] * std::cos(th_new) * (*dxtpdt_du)(2, 1);
+  }
+}
+
+Eigen::Vector2f MUSHRTTCSGDProblem::GetCollisionCenter(const Eigen::VectorXf &x, Eigen::MatrixXf* dc_dx) {
+  float len_scale = 2.0f / std::sqrt(5.0f);
+  if (dc_dx != nullptr) {
+    (*dc_dx) = Eigen::MatrixXf::Identity(2,x.size());
+    (*dc_dx)(0,2) = -len_scale * params.radius * std::sin(x[2]);
+    (*dc_dx)(1,2) = len_scale * params.radius * std::cos(x[2]);
+  }
+  return x.head<2>() + len_scale * params.radius * Eigen::Vector2f(std::cos(x[2]), std::sin(x[2]));
+}
+
+TTCObstacle* MUSHRTTCSGDProblem::CreateObstacle() {
+  TTCObstacle* o = new MUSHRTTCObstacle();
+  FillObstacle(o);
+  return o;
+}

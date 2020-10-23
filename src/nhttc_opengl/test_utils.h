@@ -58,3 +58,15 @@ public:
 std::vector<TTCObstacle*> BuildObstacleList(std::vector<Agent> agents);
 
 void SetAgentObstacleList(Agent& a, size_t a_idx, std::vector<TTCObstacle*> obsts);
+
+
+/*
+Everything happens under 
+void NHTTCSim::PlanAllAgents()
+  1. Loops over all agents to propagate forward in time
+
+  2. Build all obstacles (TTCObstacle type) in a list (which for NHTTC are the agents that have been propagated forward in time)
+
+  3. Loops over all agents and sets some params, sets the obstacle list, sets the goals, optimizes SGD params, then solves for new controls.
+  
+*/

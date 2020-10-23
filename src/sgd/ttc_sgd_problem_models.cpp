@@ -545,6 +545,9 @@ TTCObstacle* ACARTTCSGDProblem::CreateObstacle() {
 // --------------------------------------------
 // ****************** MUSHR *********************
 // --------------------------------------------
+// x is [x, y, heading_angle]
+// u is [velocity, steering_angle]
+// For partials, see eq. 27
 void MUSHRTTCSGDProblem::ContDynamics(const Eigen::VectorXf &u, const Eigen::VectorXf &x, const float t, Eigen::VectorXf* x_dot,
                                    Eigen::MatrixXf* dxdot_du, Eigen::MatrixXf* dxdot_dx) {
   float len_scale = 2.0f / std::sqrt(5.0f);

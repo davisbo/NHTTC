@@ -40,6 +40,7 @@ private:
   static constexpr int PT_SIZE = 5;
   static constexpr float bg_size = 0.2f;
 
+  // ALl the planning occurs within this single function
   void PlanAllAgents();
 
   int w, h;

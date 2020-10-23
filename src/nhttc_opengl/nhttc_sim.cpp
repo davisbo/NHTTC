@@ -75,6 +75,7 @@ NHTTCSim::NHTTCSim() {
   planning_thread = std::thread(&NHTTCSim::PlanAllAgents, this);
 }
 
+// This function handles all the NHTTC planning for opengl
 void NHTTCSim::PlanAllAgents() {
 	while (true) {
         // Wait until done or a new planning cycle starts

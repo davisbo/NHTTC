@@ -15,14 +15,14 @@ public:
   Eigen::VectorXf u, p;
   float radius = 0.1f;
 
-  virtual void ContDynamics(const Eigen::VectorXf &u,
-                                       const Eigen::VectorXf &x,
-                                       const float t,
-                                       Eigen::VectorXf* x_dot) const = 0;
-  void Dynamics(const Eigen::VectorXf &u,
-                const Eigen::VectorXf &x,
-                const float t,
-                float dt, Eigen::VectorXf* x_tpdt) const;
+  virtual void ContDynamics(const Eigen::VectorXf &u, // controls
+                                       const Eigen::VectorXf &x, // state
+                                       const float t, // not sure. looks like time?
+                                       Eigen::VectorXf* x_dot) const = 0; // change in x due to controls
+  void Dynamics(const Eigen::VectorXf &u, // controls
+                const Eigen::VectorXf &x, // state
+                const float t, // not sure, looks like time?
+                float dt, Eigen::VectorXf* x_tpdt) const; // dt = time step length (interval), and x_tpdt is new value for x_tpdt after RK4 propagation
   virtual Eigen::Vector2f GetCollisionCenter(const Eigen::VectorXf &x, Eigen::MatrixXf* dc_dx = nullptr);
   virtual ~TTCObstacle(){};
 };

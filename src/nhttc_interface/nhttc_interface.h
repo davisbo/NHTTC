@@ -1,5 +1,6 @@
 #pragma once
 #include <sgd/ttc_sgd_problem.h>
+#include <iostream>
 
 
 

@@ -1,8 +1,32 @@
 #pragma once
 #include <sgd/ttc_sgd_problem.h>
+
 #include <iostream>
+#include <fstream>
+#include <string>
+#include <iomanip>
+#include <functional>
 
+#include <time.h>
 
+#include <Eigen/Core>
+#include <Eigen/Core>
+
+// From UTILS
+std::vector<std::string> GetParts(std::string s, char delim);
+std::vector<std::vector<std::string>> LoadFileByToken(std::string file_name, int n_skip, char delim);
+
+void SetBoundsV(TTCParams &params);
+void SetBoundsA(TTCParams &params);
+void SetBoundsDD(TTCParams &params);
+void SetBoundsADD(TTCParams &params);
+void SetBoundsCAR(TTCParams &params);
+void SetBoundsACAR(TTCParams &params);
+void SetBoundsMUSHR(TTCParams &params);
+
+int GetVector(const std::vector<std::string>& parts, int offset, int v_len, Eigen::VectorXf& v);
+
+// END UTILS
 
 
 enum class AType { V, A, DD, ADD, CAR, ACAR, MUSHR };

@@ -10,7 +10,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 #pragma once
 #include <nhttc_opengl/opengl_utils.h>
 
-#include <nhttc_opengl/test_utils.h>
+#include <nhttc_interface/nhttc_interface.h>
 
 #include <thread>
 

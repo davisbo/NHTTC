@@ -31,8 +31,6 @@ int GetVector(const std::vector<std::string>& parts, int offset, int v_len, Eige
 
 enum class AType { V, A, DD, ADD, CAR, ACAR, MUSHR };
 
-std::vector<TTCObstacle*> BuildObstacleList(std::vector<Agent> agents);
-
 class Agent {
 private:
   int example;
@@ -72,3 +70,6 @@ public:
   void SetStop();
   void PrepareSGDParams();
 };
+
+
+std::vector<TTCObstacle*> BuildObstacleList(std::vector<Agent> agents);

@@ -11,14 +11,14 @@ LINK_DIRECTORIES(${GTK3_LIBRARY_DIRS})
 ADD_DEFINITIONS(${GTK3_CFLAGS_OTHER})
 endif()
 
-set( RUN_SGD_HEADERS opengl_utils.h nhttc_sim.h test_utils.h )
-set( RUN_SGD_SOURCE run_nhttc.cpp opengl_utils.cpp nhttc_sim.cpp test_utils.cpp )
+set( RUN_SGD_HEADERS opengl_utils.h nhttc_sim.h )
+set( RUN_SGD_SOURCE run_nhttc.cpp opengl_utils.cpp nhttc_sim.cpp )
 
 add_executable(run_nhttc ${RUN_SGD_SOURCE} ${RUN_SGD_HEADERS} )
 if (UNIX AND NOT APPLE)
-target_link_libraries( run_nhttc SGD nativefd glad glfw ${CMAKE_THREAD_LIBS_INIT} ${GTK3_LIBRARIES})
+target_link_libraries( run_nhttc SGD NHTTC_INTERFACE nativefd glad glfw ${CMAKE_THREAD_LIBS_INIT} ${GTK3_LIBRARIES})
 else()
-target_link_libraries( run_nhttc SGD nativefd glad glfw ${CMAKE_THREAD_LIBS_INIT} )
+target_link_libraries( run_nhttc SGD NHTTC_INTERFACE nativefd glad glfw ${CMAKE_THREAD_LIBS_INIT} )
 endif()
 
 file(COPY shaders DESTINATION ${CMAKE_CURRENT_BINARY_DIR})

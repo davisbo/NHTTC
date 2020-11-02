@@ -10,7 +10,6 @@
 #include <time.h>
 
 #include <Eigen/Core>
-#include <Eigen/Core>
 
 // From UTILS
 std::vector<std::string> GetParts(std::string s, char delim);
@@ -32,9 +31,6 @@ int GetVector(const std::vector<std::string>& parts, int offset, int v_len, Eige
 enum class AType { V, A, DD, ADD, CAR, ACAR, MUSHR };
 
 class Agent {
-private:
-  int example;
-
 public:
   TTCSGDProblem* prob;
   SGDOptParams opt_params;
@@ -69,7 +65,13 @@ public:
   bool AtGoal();
   void SetStop();
   void PrepareSGDParams();
+
+private:
+  int example;
+
 };
 
 
 std::vector<TTCObstacle*> BuildObstacleList(std::vector<Agent> agents);
+
+void SetAgentObstacleList(Agent& a, size_t a_idx, std::vector<TTCObstacle*> obsts);

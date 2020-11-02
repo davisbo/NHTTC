@@ -110,20 +110,25 @@ void NHTTCSim::PlanAllAgents() {
 			if (!planning_agents[a_idx].controlled) {
 				continue; // Skip any not controlled agent
 			}
-			planning_agents[a_idx].opt_params.max_time = agent_plan_time_ms;
-			SetAgentObstacleList(planning_agents[a_idx], a_idx, all_obsts);
+      planning_agents[a_idx].SetPlanTime(agent_plan_time_ms);
+			// planning_agents[a_idx].opt_params.max_time = agent_plan_time_ms;
+
+			// SetAgentObstacleList(planning_agents[a_idx], a_idx, all_obsts);
+      planning_agents[a_idx].SetObstacles(all_obsts, a_idx);
 
 			// Ensure goals set properly
-			planning_agents[a_idx].prob->params.goals.clear();
-			for (size_t i = 0; i < planning_agents[a_idx].prob->params.ts_goal_check.size(); ++i) {
-				planning_agents[a_idx].prob->params.goals.push_back(planning_agents[a_idx].goal);
-			}
+      planning_agents[a_idx].UpdateGoal(planning_agents[a_idx].goal);
+			// planning_agents[a_idx].prob->params.goals.clear();
+			// for (size_t i = 0; i < planning_agents[a_idx].prob->params.ts_goal_check.size(); ++i) {
+			// 	planning_agents[a_idx].prob->params.goals.push_back(planning_agents[a_idx].goal);
+			// }
 
 			// Optimize controls
-			planning_agents[a_idx].PrepareSGDParams();
-			float sgd_opt_cost;
-			Eigen::VectorXf u_new = SGD::Solve(planning_agents[a_idx].prob, planning_agents[a_idx].opt_params, &sgd_opt_cost);
-			planning_agents[a_idx].prob->params.u_curr = 0.5f * (u_new + planning_agents[a_idx].prob->params.u_curr); // Reciprocity
+      planning_agents[a_idx].UpdateControls();
+			// planning_agents[a_idx].PrepareSGDParams();
+			// float sgd_opt_cost;
+			// Eigen::VectorXf u_new = SGD::Solve(planning_agents[a_idx].prob, planning_agents[a_idx].opt_params, &sgd_opt_cost);
+			// planning_agents[a_idx].prob->params.u_curr = 0.5f * (u_new + planning_agents[a_idx].prob->params.u_curr); // Reciprocity
 		}
 		should_plan.store(false);
 	}
@@ -192,7 +197,7 @@ int TypeToInt(AType t) {
     case AType::MUSHR:
       return 6;
     default:
-      std::cerr << "Invalid Agent Type!" << std::endl;
+      std::cerr << "Invalid Agent Type!" <<  std::endl;
       return 0;
   }
 }

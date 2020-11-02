@@ -1,5 +1,5 @@
-#include <sgd/ttc_sgd_problem_models.h>
 #include <nhttc_interface/nhttc_interface.h>
+#include <sgd/ttc_sgd_problem_models.h>
 
 // UTILS
 std::vector<std::string> GetParts(std::string s, char delim) {
@@ -77,77 +77,6 @@ int GetVector(const std::vector<std::string>& parts, int offset, int v_len, Eige
 
 
 // AGENT DEFINITIONS
-
-Agent::Agent(SGDOptParams opt_params_in) {
-  opt_params = opt_params_in;
-}
-
-Agent::Agent(std::vector<std::string> parts, SGDOptParams opt_params_in) {
-  TTCParams params;
-  params.find_all_ttcs = false;
-  type_name = parts[0];
-  if (parts[0] == "v") {
-    a_type = AType::V;
-    u_dim = x_dim = 2;
-    SetBoundsV(params);
-    prob = new VTTCSGDProblem(params);
-  } else if (parts[0] == "a") {
-    a_type = AType::A;
-    u_dim =  2;
-    x_dim = 4;
-    SetBoundsA(params);
-    prob = new ATTCSGDProblem(params);
-  } else if (parts[0] == "dd") {
-    a_type = AType::DD;
-    u_dim =  2;
-    x_dim = 3;
-    SetBoundsDD(params);
-    prob = new DDTTCSGDProblem(params);
-  } else if (parts[0] == "add") {
-    a_type = AType::ADD;
-    u_dim =  2;
-    x_dim = 5;
-    SetBoundsADD(params);
-    prob = new ADDTTCSGDProblem(params);
-  } else if (parts[0] == "car") {
-    a_type = AType::CAR;
-    u_dim =  2;
-    x_dim = 3;
-    SetBoundsCAR(params);
-    prob = new CARTTCSGDProblem(params);
-  } else if (parts[0] == "acar") {
-    a_type = AType::ACAR;
-    u_dim =  2;
-    x_dim = 5;
-    SetBoundsACAR(params);
-    prob = new ACARTTCSGDProblem(params);
-  } else if (parts[0] == "mushr") {
-    a_type = AType::MUSHR;
-    u_dim =  2;
-    x_dim = 3;
-    SetBoundsMUSHR(params);
-    prob = new MUSHRTTCSGDProblem(params);
-  } else {
-    std::cerr << "Unsupported Dynamics Model: " << parts[0] << std::endl;
-    exit(-1);
-  }
-  controlled = (parts[1] == "y");
-  reactive = (parts[2] == "y");
-  int offset = 3;
-  Eigen::VectorXf u_0, x_0, g;
-  offset = GetVector(parts, offset, x_dim, x_0);
-  offset = GetVector(parts, offset, u_dim, u_0);
-  offset = GetVector(parts, offset, 2, g);
-
-  prob->params.u_curr = u_0;
-  prob->params.x_0 = x_0;
-  goal = g;
-
-  opt_params = opt_params_in;
-  opt_params.x_lb = prob->params.u_lb;
-  opt_params.x_ub = prob->params.u_ub;
-  opt_params.x_0 = u_0;
-}
 
 Agent::Agent(SGDOptParams opt_params_in) {
   opt_params = opt_params_in;
@@ -313,4 +242,29 @@ void Agent::PrepareSGDParams() {
   opt_params.x_0 = prob->params.u_curr;
   opt_params.x_lb = prob->params.u_lb;
   opt_params.x_ub = prob->params.u_ub;
+}
+
+std::vector<TTCObstacle*> BuildObstacleList(std::vector<Agent> agents) {
+  std::vector<TTCObstacle*> obsts;
+  for (size_t a_idx = 0; a_idx < agents.size(); ++a_idx) {
+    obsts.push_back(agents[a_idx].prob->CreateObstacle());
+  }
+  return obsts;
+}
+
+void SetAgentObstacleList(Agent& a, size_t a_idx, std::vector<TTCObstacle*> obsts) {
+  a.prob->params.obsts.clear();
+  if (!a.reactive) {
+    return;
+  }
+  for (size_t b_idx = 0; b_idx < obsts.size(); ++b_idx) {
+    if (b_idx == a_idx) {
+      continue;
+    }
+    float dist = (a.prob->params.x_0.head<2>() - obsts[b_idx]->p.head<2>()).norm();
+    // Ignore any obstacles that cannot interact with us within our ttc horizon
+    if (dist < 2.0 * a.prob->params.vel_limit * a.prob->params.max_ttc) {
+      a.prob->params.obsts.push_back(obsts[b_idx]);
+    }
+  }
 }
